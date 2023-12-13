@@ -3,7 +3,6 @@ import streamlit as st
 import altair as alt
 from PIL import Image
 
-
 # CONFIGURAÇÃO DA PÁGINA
 st.set_page_config(
     page_title='DASHBOARD DE VENDAS',
