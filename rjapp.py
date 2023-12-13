@@ -23,22 +23,29 @@ df = pd.read_excel(
     io = 'rjcariri.xlsx',
     engine='openpyxl',
     sheet_name='dados',
-    usecols='A:AZ',
-    nrows=332,
+    usecols='A:AA',
+    nrows=2221,
 )
 
 # --- Criar o sidebar
 with st.sidebar:
     logo_teste = Image.open('logo.png')
     st.image(logo_teste, width=250)
-    st.subheader('MENU - DASHBOOARD DE VENDAS')
-    # --- variaveis que vão armazenar os filtors ---#
+    st.subheader('MENU - DASHBOOARD CONSULTORES')
+
+    # --- variaveis que vão armazenar os filtors
     fMes = st.selectbox(
         "Selecione o Mês:",
         options=df['Mês'].unique() # options somente valores unicos quando se repetem
     )
 
-    # --- variável produto ---
+    # --- variável setor
+    fSetor = st.selectbox(
+        "Selecione o Setor:",
+        options=df['Setor'].unique()  # options somente valores unicos quando se repetem
+    )
+
+    # --- variável produto
     fGrupo = st.selectbox(
         "Selecione o Grupo:",
         options=df['Grupo'].unique()
