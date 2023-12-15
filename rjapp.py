@@ -54,11 +54,10 @@ with st.sidebar:
 
 myBar = st.progress(0)
 for num in range(100):
-    time.sleep(0.01)
+    time.sleep(0.003)
     myBar.progress(num+1)
 
-
-st.write('Faturamento')
+st.write('Meta Faturamento')
 tab1_qtde_grupo = tab1_qtde_grupo.groupby('Grupo').sum().reset_index()
 
 tab1_qtde_grupo = tab1_qtde_grupo.drop(columns=['%.','Setor', 'Base Cli.', 'Rota', '1-Realizado', '2-Anterior', '(1-2) - Diferença', '.%.',
@@ -66,3 +65,4 @@ tab1_qtde_grupo = tab1_qtde_grupo.drop(columns=['%.','Setor', 'Base Cli.', 'Rota
 
 # Remove os indices no inicio do df
 st.dataframe(tab1_qtde_grupo, use_container_width=True, hide_index=True)
+
