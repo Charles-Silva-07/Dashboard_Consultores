@@ -1,3 +1,5 @@
+import time
+
 import pandas as pd
 import streamlit as st
 import altair as alt
@@ -46,6 +48,17 @@ with st.sidebar:
         df['Setor'] == fSetor) &
         (df['Seção'] == fSecao)
     ]
+    with st.spinner("Carregando..."):
+        time.sleep(2)
+    st.success("Pronto")
+
+    st.error('Caracter inválido')
+
+myBar = st.progress(0)
+for num in range(100):
+    time.sleep(0.01)
+    myBar.progress(num+1)
+
 
 st.write('Faturamento')
 tab1_qtde_grupo = tab1_qtde_grupo.groupby('Grupo').sum().reset_index()
@@ -54,4 +67,4 @@ tab1_qtde_grupo = tab1_qtde_grupo.drop(columns=['%.','Setor', 'Base Cli.', 'Rota
 '(4-5) Diferença', 'ST', 'SM', 'Tend. %', '8-Realizado','9-Meta', '(8-9) Diferença', '.%', 'branco', 'branco1', 'branco2'])
 
 # Remove os indices no inicio do df
-st.dataframe(tab1_qtde_grupo, hide_index=True)
+st.dataframe(tab1_qtde_grupo, use_container_width=True, hide_index=True)
