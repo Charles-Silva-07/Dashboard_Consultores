@@ -52,8 +52,6 @@ with st.sidebar:
         time.sleep(2)
     st.success("Pronto")
 
-    st.error('Caracter inválido')
-
 myBar = st.progress(0)
 for num in range(100):
     time.sleep(0.01)
