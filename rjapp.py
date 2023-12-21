@@ -5,7 +5,6 @@ import streamlit as st
 import altair as alt
 from PIL import Image
 
-
 # CONFIGURAÇÃO DA PÁGINA
 st.set_page_config(
     layout='wide',
@@ -32,6 +31,10 @@ def busca_df():
 
 df = busca_df()
 
+# Fim do DF
+
+st.subheader(":bar_chart: DASBOARD DE VENDAS ")
+
 # --- Criar o sidebar
 with st.sidebar:
     logo_teste = Image.open('logo.png')
@@ -53,28 +56,45 @@ with st.sidebar:
         df['Setor'] == fSetor) &
         (df['Seção'] == fSecao)
     ]
+
     with st.spinner("Carregando..."):
         time.sleep(2)
     st.success("Pronto")
+
+    meta = round(tab1_qtde_grupo.loc[:,('Meta')].sum(),2)
+    fat_total_vendedor = round(tab1_qtde_grupo.loc[:,('Realizado')].sum(),2)
+    percentual = round(fat_total_vendedor / meta * 100, 2)
 
 myBar = st.progress(0)
 for num in range(100):
     time.sleep(0.003)
     myBar.progress(num+1)
 
-st.write('Meta Faturamento')
 tab1_qtde_grupo = tab1_qtde_grupo.groupby('Grupo').sum().reset_index()
 
 tab1_qtde_grupo = tab1_qtde_grupo.drop(columns=['Setor', '%.', 'Base Cli.', 'Rota', '1-Realizado', '2-Anterior',
                                                 '(1-2) - Diferença', '.%.',
                                                 '(4-5) Diferença', 'ST', 'SM', 'Tend. %', '8-Realizado', '9-Meta',
                                                 '(8-9) Diferença', '.%', 'branco', 'branco1', 'branco2'])
-
 #inserindo a coluna de percentual
+tab1_qtde_grupo['Porcentagem: %'] = round(tab1_qtde_grupo['Realizado'] / tab1_qtde_grupo['Meta'] * 100,2 )
 
-tab1_qtde_grupo['%'] = round(tab1_qtde_grupo['Realizado'] / tab1_qtde_grupo['Meta'].sum()*100, 2 )
+col1, col2, col3, col4 = st.columns([1,1,1,1])
 
-# Remove os indices no inicio do df
+with col1:
+    st.write('**FATURAMENTO:**')
+    st.info(f"R$ {fat_total_vendedor}")
+
+with col2:
+    st.write('**PORCENTAGEM:**')
+    st.info(f"{percentual} %")
+
+st.markdown("---")
+
+# tab_rota = df.groupby(['Setor', 'Seção', 'Grupo']).sum().reset_index()
+
+# st.bar_chart(tab1_qtde_grupo, x="Meta", y="Realizado")
+
 st.dataframe(tab1_qtde_grupo, use_container_width=True, hide_index=True)
 
 mostrar_por_rotas = \
@@ -85,13 +105,7 @@ if on:
     tab_rota = tab_rota.drop(columns=['Seção', 'Par/Impar', 'Fornecedor', '%.', 'Base Cli.', '1-Realizado', '2-Anterior',
                                       '(1-2) - Diferença', '.%.', '(4-5) Diferença', 'ST', 'SM', 'Tend. %', '8-Realizado',
                                       '9-Meta', '(8-9) Diferença', '.%', 'branco', 'branco1', 'branco2'])
-
     # ordenando as colunas do meu df tab_rota
     tab_rota = tab_rota[['Área', 'Setor', 'Rota', 'Grupo', 'Realizado', 'Meta', '%']]
-
     #Largura do container
     st.dataframe(tab_rota, use_container_width=True, hide_index=True)
-
-# tab_rota = df.groupby(['Setor', 'Seção', 'Grupo']).sum().reset_index()
-
-# st.bar_chart(tab1_qtde_grupo, x="Meta", y="Realizado")
