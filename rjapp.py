@@ -110,19 +110,6 @@ if on:
     #Largura do container
     st.dataframe(tab_rota, use_container_width=True, hide_index=True)
 
-
-# GPT grafico um gerado inicio
-
-
-
-
-
-
-
-
-
-
-
 # Criar o gráfico de barras horizontais com cantos superiores direitos arredondados e cor única
 grafico_barras = alt.Chart(tab1_qtde_grupo).transform_joinaggregate(
     Meta='sum(Meta)',
@@ -170,3 +157,4 @@ text_meta = grafico_barras.mark_text(
 
 # Exibir o gráfico com as legendas e valores ao lado de cada barra
 st.altair_chart(grafico_barras + linha_meta + text_realizado + text_meta, use_container_width=True)
+
