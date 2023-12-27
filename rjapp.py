@@ -157,4 +157,3 @@ text_meta = grafico_barras.mark_text(
 
 # Exibir o gráfico com as legendas e valores ao lado de cada barra
 st.altair_chart(grafico_barras + linha_meta + text_realizado + text_meta, use_container_width=True)
-
