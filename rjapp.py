@@ -188,7 +188,6 @@ st.altair_chart(grafico_barras + linha_meta + text_realizado + text_meta + difer
 # linha abaixo grafico faturamento
 st.markdown("---")
 
-# VOLUME
 # INICIANDO O VOLUME
 # Remover colunas do DataFrame
 colunas_para_remover_do_volume = ['Seção', 'Rota', 'Área', 'Setor', 'Par/Impar', 'Fornecedor',
