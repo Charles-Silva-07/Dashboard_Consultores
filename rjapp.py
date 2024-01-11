@@ -1,3 +1,5 @@
+
+
 import time
 import pandas as pd
 import streamlit as st
@@ -5,10 +7,11 @@ import altair as alt
 from PIL import Image
 import locale
 
-locale.setlocale(locale.LC_MONETARY, 'pt_BR.UTF-8')
+
 
 # CONFIGURAÇÃO DA PÁGINA
 st.set_page_config(
+    locale.setlocale(locale.LC_MONETARY, 'pt_BR.UTF-8'),
     layout='wide',
     page_title='DASHBOARD DE VENDAS',
     page_icon='💲',
