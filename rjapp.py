@@ -1,14 +1,8 @@
-import locale
 import streamlit as st
 import time
 import pandas as pd
 import altair as alt
 from PIL import Image
-
-try:
-    locale.setlocale(locale.LC_MONETARY, 'pt_BR.UTF-8')
-except locale.Error as e:
-    print(f"Erro ao configurar o locale: {e}")
 
 # CONFIGURAÇÃO DA PÁGINA
 st.set_page_config(
@@ -81,9 +75,9 @@ with st.sidebar:
     st.success("Pronto")
 
     # Arredondar valores
-    locale.setlocale(locale.LC_MONETARY, 'pt_BR')
-    meta = locale.currency(round(tab1_qtde_grupo['Meta'].sum(), 2), grouping=True)
-    fat_total_vendedor = locale.currency(round(tab1_qtde_grupo['Realizado'].sum(), 2), grouping=True)
+    # locale.setlocale(locale.LC_MONETARY, 'pt_BR')
+    meta = f"R$ {tab1_qtde_grupo['Meta'].sum():,.2f}"
+    valor_formatado = f"R$ {tab1_qtde_grupo['Realizado'].sum():,.2f}"
     percentual = round(tab1_qtde_grupo['Realizado'].sum() / tab1_qtde_grupo['Meta'].sum() * 100, 2)
 
 myBar = st.progress(0)
@@ -114,7 +108,7 @@ col1, col2, = st.columns([1, 1])
 
 with col1:
     st.write('**FATURAMENTO:**')
-    st.info(fat_total_vendedor)
+    st.info(valor_formatado)
 
 with col2:
     st.write('**PORCENTAGEM:**')
@@ -297,9 +291,6 @@ st.altair_chart(grafico_barras_volume + linha_meta_volume + text_realizado_volum
 
 st.markdown("---")
 
-# Define a formatação para a moeda brasileira (BRL)
-locale.setlocale(locale.LC_MONETARY, 'pt_BR')
-
 # Obtendo o setor selecionado no Selectbox
 setor_selecionado = fSetor
 
@@ -310,19 +301,20 @@ soma_realizado = df.loc[df['Setor'] == setor_selecionado, 'Realizado'].sum()
 meta_de_faturamento_setor = df.loc[df['Setor'] == setor_selecionado, 'Meta'].sum()
 
 # inserindo o formato real brasileiro
-meta_formatada = locale.currency(meta_de_faturamento_setor, grouping=True)
+# meta_formatada = locale.currency(meta_de_faturamento_setor, grouping=True)
+meta_formatada = f"R$ {meta_de_faturamento_setor:,.2f}"
 
 # calculando a porcentagem da meta
 porcentagem_meta_setor = round(soma_realizado / meta_de_faturamento_setor * 100, 2)
 
 # Formatando a soma como moeda brasileira (BRL)
-soma_formatada = locale.currency(soma_realizado, grouping=True)
+soma_formatada = f"R$ {soma_realizado:,.2f}"
 
 # Realizando a subtração do realizado menos a meta para trazer a diferença
 falta_fat = meta_de_faturamento_setor =round(soma_realizado - meta_de_faturamento_setor, 2)
 
 # Formatando a soma como moeda brasileira (BRL)
-falta_faturamento_formatada = locale.currency(falta_fat, grouping=True)
+falta_faturamento_formatada = f"R$ {falta_fat:,.2f}"
 
 # Exibindo os resultados
 col1, col2, col3, col4, = st.columns([1, 1, 1, 1])
