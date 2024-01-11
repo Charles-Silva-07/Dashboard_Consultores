@@ -10,4 +10,7 @@ pip install - r requirements.txt
 
 streamlit run rjapp.py
 
+pip install --upgrade streamlit
+
+
 

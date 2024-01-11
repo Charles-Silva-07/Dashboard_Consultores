@@ -5,7 +5,10 @@ import pandas as pd
 import altair as alt
 from PIL import Image
 
-locale.setlocale(locale.LC_MONETARY, 'pt_BR.UTF-8')
+try:
+    locale.setlocale(locale.LC_MONETARY, 'pt_BR.UTF-8')
+except locale.Error as e:
+    print(f"Erro ao configurar o locale: {e}")
 
 # CONFIGURAÇÃO DA PÁGINA
 st.set_page_config(
