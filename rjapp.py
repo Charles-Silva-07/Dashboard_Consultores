@@ -46,7 +46,17 @@ st.subheader(":bar_chart: DASHBOARD DE VENDAS ")
 
 st.subheader("Vendas por volume")
 
+# Data Frame para as areas
 area_dataframe_volume = busca_df_volume()
+
+# Data Frame para os SETORES
+dataframe_volume = busca_df_volume()
+
+# Removendo as colunas do dataframe_volume não necessarioas
+dataframe_volume = dataframe_volume.drop(columns=['Par/Impar', 'Fornecedor','Base Cli.', '1-Realizado', '2-Anterior', '(1-2) - Diferença', '.%.', 'branco'
+                        ,'(4-5) Diferença', '%.',
+                        'branco1', '8-Realizado', '(8-9) Diferença', '9-Meta', '(8-9) Diferença', '.%', 'branco2', 'ST', 'SM', 'Tend. %',
+])
 
 # Removendo a coluna
 area_dataframe_volume['Rota'] = area_dataframe_volume['Rota'] // 100 * 100
@@ -57,6 +67,10 @@ area_dataframe_volume = area_dataframe_volume.drop(
              '2-Anterior', '(1-2) - Diferença', '.%.', 'branco', '(4-5) Diferença', '%.', 'branco1', '8-Realizado',
              '(8-9) Diferença', '9-Meta', '(8-9) Diferença', '.%', 'branco2', 'ST', 'SM', 'Tend. %',
              ])
+# Adicionando porcentagem aos setores
+dataframe_volume['Percentual %'] = round(dataframe_volume['Realizado'] / dataframe_volume['Meta'] * 100, 1)
+
+dataframe_volume['Diferença'] = (dataframe_volume['Realizado'] - dataframe_volume['Meta']).round(2)
 
 with st.sidebar:
     logo_teste = Image.open('logo.png')
@@ -70,6 +84,19 @@ with st.sidebar:
     # Utilizando a função unique() para obter valores únicos rotas centencas mostradas na tela
     rota_area_options = area_dataframe_volume['Rota'].unique()
     rota_area = st.selectbox("Rota Área:", options=sorted(rota_area_options), index=None)
+
+    # Utilizando a função unique() para obter valores únicos dos Setores
+    setor_optons = dataframe_volume['Setor'].unique()
+    setor = st.selectbox("Setor:", options=sorted(setor_optons), index=None)
+
+    # Filtrar as rotas com base no setor selecionado e organizar do menor para o maior
+    rotas_do_setor = sorted(dataframe_volume[dataframe_volume['Setor'] == setor]['Rota'].unique())
+
+    # Buscar dados por rota
+    rota = st.selectbox(
+        "Rota:",
+        options=rotas_do_setor, index=None,
+    )
 
     # Utilizando a função unique() para obter valores únicos das seções
     secao_options = area_dataframe_volume['Seção'].unique()
@@ -218,3 +245,119 @@ elif area and secao and not rota_area:
 
     # Exibir a tabela estilizada
     st.table(styled_df_area_secao)
+
+
+# -------------------------------- LÓGICA SETORES ------------------------------- #
+
+ # Inicialize a variável tabela_volume_por_grupo
+# Tabela de Volume por Grupo
+tabela_volume_por_grupo = pd.DataFrame()
+
+# Início Filtros Setores
+if setor and not (rota or secao or (rota and secao)):
+    tabela_volume_por_grupo = dataframe_volume.loc[
+        (dataframe_volume['Setor'] == setor)
+    ]
+
+    # Remover a rota
+    tabela_volume_por_grupo = tabela_volume_por_grupo.drop(columns=['Rota'])
+
+    # Agrupar
+    grouped_setor_df = tabela_volume_por_grupo.groupby(['Área', 'Grupo']).agg({
+        'Realizado': 'sum',
+        'Meta': 'sum'
+    }).reset_index()
+
+    # Adicionar a coluna 'Diferença'
+    grouped_setor_df['Diferença'] = (grouped_setor_df['Realizado'] - grouped_setor_df['Meta']).round(2)
+
+    # Adicionar a coluna 'Percentual'
+    grouped_setor_df['Percentual %'] = (
+                (grouped_setor_df['Realizado'] / grouped_setor_df['Meta']) * 100).round(2)
+
+    # Criar dataframe styler
+    styled_df_setor = (
+        grouped_setor_df.style
+            .applymap(highlight_zeros, subset=pd.IndexSlice[:, ['Realizado']])
+            .format({'Realizado': '{:.2f}', 'Meta': '{:.2f}', 'Diferença': '{:.2f}', 'Percentual %': '{:.2f}'})
+            .hide_index()
+    )
+
+    st.table(styled_df_setor)
+
+# if setor e Rota
+
+if setor and rota and not (area or secao or (rota and secao)):
+    tabela_volume_por_grupo = dataframe_volume.loc[
+        (dataframe_volume['Setor'] == setor) &
+        (dataframe_volume['Rota'] == rota)
+        # (dataframe_volume ['Área'] == area)
+    ]
+
+    # Agrupar
+    grouped_setor_rota_df = tabela_volume_por_grupo.groupby(['Rota', 'Grupo']).agg({
+        'Realizado': 'sum',
+        'Meta': 'sum'
+    }).reset_index()
+
+    # Adicionar a coluna 'Diferença'
+    grouped_setor_rota_df['Diferença'] = (grouped_setor_rota_df['Realizado'] - grouped_setor_rota_df['Meta']).round(2)
+
+    # Adicionar a coluna 'Percentual'
+    grouped_setor_rota_df['Percentual %'] = (
+                (grouped_setor_rota_df['Realizado'] / grouped_setor_rota_df['Meta']) * 100).round(2)
+
+    # Criar dataframe styler
+    styled_df_setor_rota = (
+        grouped_setor_rota_df.style
+            .applymap(highlight_zeros, subset=pd.IndexSlice[:, ['Realizado']])
+            .format({'Realizado': '{:.2f}', 'Meta': '{:.2f}', 'Diferença': '{:.2f}', 'Percentual %': '{:.2f}'})
+            .hide_index()
+    )
+
+    st.table(styled_df_setor_rota)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# elif area and secao:  # If Área and Seção are selected
+#     tabela_volume_por_grupo = dataframe_volume.loc[
+#         (dataframe_volume['Área'] == area) &
+#         (dataframe_volume['Seção'] == secao)
+#     ]
+#
+# elif secao:  # If only Seção is selected
+#     tabela_volume_por_grupo = dataframe_volume.loc[
+#         (dataframe_volume['Setor'] == setor) &
+#         (dataframe_volume['Seção'] == secao)
+#     ]
+#
+# elif rota or secao:  # If only Rota or Seção is selected
+#     tabela_volume_por_grupo = dataframe_volume.loc[
+#         (dataframe_volume['Setor'] == setor) &
+#         (dataframe_volume['Rota'] == rota)
+#     ]
+
+# else:  # If neither Rota, Seção, nor Área is selected, display the entire dataframe for the selected Setor
+#     tabela_volume_por_grupo = dataframe_volume[dataframe_volume['Setor'] == setor]
+# Fim Filtros setores
+
