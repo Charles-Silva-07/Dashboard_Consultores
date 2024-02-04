@@ -317,47 +317,70 @@ if setor and rota and not (area or secao or (rota and secao)):
 
     st.table(styled_df_setor_rota)
 
+# Verificar se 'Setor', 'Rota' e 'Seçao' são verdadeiros
+elif setor and rota and secao:
+    # Filtrar DataFrame pelo Setor, rota e seção
+    tabela_volume_por_grupo = dataframe_volume.loc[
+        (dataframe_volume['Setor'] == setor) &
+        (dataframe_volume['Rota'] == rota) &
+        (dataframe_volume['Seção'] == secao)
+        ]
+
+    # Agrupar DataFrame filtrado
+    grouped_df_setor_rota_secao = tabela_volume_por_grupo.groupby(['Rota', 'Grupo']).agg({
+        'Realizado': 'sum',
+        'Meta': 'sum'
+    }).reset_index()
+
+    # Adicionar a coluna 'Diferença'
+    grouped_df_setor_rota_secao['Diferença'] = (grouped_df_setor_rota_secao['Realizado']-grouped_df_setor_rota_secao['Meta']).round(2)
+
+    # Adicionar a coluna 'Percentual'
+    grouped_df_setor_rota_secao['Percentual %'] = (
+            (grouped_df_setor_rota_secao['Realizado'] / grouped_df_setor_rota_secao['Meta']) * 100).round(2)
+
+    # Criar DataFrame com as estilizações
+    styled_df_grouped_df_setor_rota_secao = (
+        grouped_df_setor_rota_secao.style
+            .applymap(highlight_zeros, subset=pd.IndexSlice[:, ['Realizado']])
+            .format({'Realizado': '{:.2f}', 'Meta': '{:.2f}', 'Diferença': '{:.2f}', 'Percentual %': '{:.2f}'})
+            .hide_index()
+    )
+
+    # Exibir a tabela estilizada
+    st.table(styled_df_grouped_df_setor_rota_secao)
 
 
+# Verificar se 'Setor', 'secao'  são verdadeiros
+elif setor and secao and not rota:
+    # Filtrar DataFrame pelo Setor, seção
+    tabela_volume_por_grupo = dataframe_volume.loc[
+        (dataframe_volume['Setor'] == setor) &
+        (dataframe_volume['Seção'] == secao)
+        ]
 
+    # Remover a coluna 'Rota' do DataFrame filtrado
+    grouped_df_setor_secao = tabela_volume_por_grupo.drop(columns=['Rota'])
 
+    # Agrupar DataFrame filtrado
+    grouped_df_setor_secao = tabela_volume_por_grupo.groupby(['Setor', 'Grupo']).agg({
+        'Realizado': 'sum',
+        'Meta': 'sum'
+    }).reset_index()
 
+    # Adicionar a coluna 'Diferença'
+    grouped_df_setor_secao['Diferença'] = (grouped_df_setor_secao['Realizado'] - grouped_df_setor_secao['Meta']).round(2)
 
+    # Adicionar a coluna 'Percentual'
+    grouped_df_setor_secao['Percentual %'] = ((grouped_df_setor_secao['Realizado'] / grouped_df_setor_secao['Meta']) * 100).round(2)
 
+    # Criar DataFrame com as estilizações
+    styled_df_grouped_df_setor_secao = (
+        grouped_df_setor_secao.style
+            .applymap(highlight_zeros, subset=pd.IndexSlice[:, ['Realizado']])
+            .format({'Realizado': '{:.2f}', 'Meta': '{:.2f}', 'Diferença': '{:.2f}',  'Percentual %': '{:.2f}'})
+            .hide_index()
+    )
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# elif area and secao:  # If Área and Seção are selected
-#     tabela_volume_por_grupo = dataframe_volume.loc[
-#         (dataframe_volume['Área'] == area) &
-#         (dataframe_volume['Seção'] == secao)
-#     ]
-#
-# elif secao:  # If only Seção is selected
-#     tabela_volume_por_grupo = dataframe_volume.loc[
-#         (dataframe_volume['Setor'] == setor) &
-#         (dataframe_volume['Seção'] == secao)
-#     ]
-#
-# elif rota or secao:  # If only Rota or Seção is selected
-#     tabela_volume_por_grupo = dataframe_volume.loc[
-#         (dataframe_volume['Setor'] == setor) &
-#         (dataframe_volume['Rota'] == rota)
-#     ]
-
-# else:  # If neither Rota, Seção, nor Área is selected, display the entire dataframe for the selected Setor
-#     tabela_volume_por_grupo = dataframe_volume[dataframe_volume['Setor'] == setor]
-# Fim Filtros setores
-
+    # Exibir a tabela estilizada
+    st.table(styled_df_grouped_df_setor_secao)
