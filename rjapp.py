@@ -23,7 +23,7 @@ def busca_df():
         engine='openpyxl',
         sheet_name='dados',
         usecols='A:AA',
-        nrows=2641,
+        nrows=2661,
     )
     return df
 
@@ -38,7 +38,7 @@ def busca_df_volume():
         engine='openpyxl',
         sheet_name='volume',
         usecols='A:AA',
-        nrows=2641,
+        nrows=2661,
     )
     return df_volume
 
