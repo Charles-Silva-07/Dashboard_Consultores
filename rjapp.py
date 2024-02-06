@@ -42,7 +42,7 @@ def busca_df_volume():
     )
     return df_volume
 
-st.subheader(":bar_chart: DASHBOARD DE VENDAS ")
+# st.subheader(":bar_chart: DASHBOARD DE VENDAS ")
 
 st.subheader("Vendas por volume")
 
