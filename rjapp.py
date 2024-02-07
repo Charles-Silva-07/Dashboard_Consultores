@@ -14,6 +14,10 @@ st.set_page_config(
     }
 )
 
+with open("style.css") as f:
+    # Adicione um bloco de código CSS para personalizar o estilo
+    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
 # --- Criando o dataframe
 @st.cache_data
 def busca_df():
@@ -23,7 +27,7 @@ def busca_df():
         engine='openpyxl',
         sheet_name='dados',
         usecols='A:AA',
-        nrows=2661,
+        nrows=5383,
     )
     return df
 
@@ -38,7 +42,7 @@ def busca_df_volume():
         engine='openpyxl',
         sheet_name='volume',
         usecols='A:AA',
-        nrows=2661,
+        nrows=5383,
     )
     return df_volume
 
@@ -68,7 +72,7 @@ area_dataframe_volume = area_dataframe_volume.drop(
              '(8-9) Diferença', '9-Meta', '(8-9) Diferença', '.%', 'branco2', 'ST', 'SM', 'Tend. %',
              ])
 # Adicionando porcentagem aos setores
-dataframe_volume['Percentual %'] = round(dataframe_volume['Realizado'] / dataframe_volume['Meta'] * 100, 1)
+dataframe_volume['Perc. %'] = round(dataframe_volume['Realizado'] / dataframe_volume['Meta'] * 100, 1)
 
 dataframe_volume['Diferença'] = (dataframe_volume['Realizado'] - dataframe_volume['Meta']).round(2)
 
@@ -118,9 +122,6 @@ for num in range(100):
     def highlight_zeros(value):
         return 'background-color: Red; color: White' if value == 0 else ''
 
-import streamlit as st
-import pandas as pd
-
 
 def highlight_zeros(value):
     return 'background-color: Red' if value == 0 else ''
@@ -138,14 +139,17 @@ if area and not (rota_area or secao or (rota_area and secao)):
     # Adicionar a coluna 'Diferença'
     grouped_df['Diferença'] = (grouped_df['Realizado'] - grouped_df['Meta']).round(2)
 
-    # Adicionar a coluna 'Percentual %'
-    grouped_df['Percentual %'] = ((grouped_df['Realizado'] / grouped_df['Meta']) * 100).round(2)
+    # Adicionar a coluna 'Perc. %'
+    grouped_df['Perc. %'] = ((grouped_df['Realizado'] / grouped_df['Meta']) * 100).round(2)
+
+    # Remove as linhas que contem nan
+    grouped_df.dropna(inplace=True)
 
     # Criar DataFrame com as estilizações
     styled_df = (
         grouped_df.style
             .applymap(highlight_zeros, subset=pd.IndexSlice[:, ['Realizado']])
-            .format({'Realizado': '{:.2f}', 'Meta': '{:.2f}', 'Diferença': '{:.2f}', 'Percentual %': '{:.2f}'})
+            .format({'Realizado': '{:.2f}', 'Meta': '{:.2f}', 'Diferença': '{:.2f}', 'Perc. %': '{:.2f}'})
             .hide_index()
     )
 
@@ -169,13 +173,16 @@ elif area and rota_area and not secao:
         grouped_df_area_rota['Diferença'] = (grouped_df_area_rota['Realizado'] - grouped_df_area_rota['Meta']).round(2)
 
         # Adicionar a coluna 'Percentual'
-        grouped_df_area_rota['Percentual %'] = ((grouped_df_area_rota['Realizado'] / grouped_df_area_rota['Meta']) * 100).round(2)
+        grouped_df_area_rota['Perc. %'] = ((grouped_df_area_rota['Realizado'] / grouped_df_area_rota['Meta']) * 100).round(2)
+
+        # Remove as linhas que contem nan
+        grouped_df_area_rota.dropna(inplace=True)
 
         # Criar DataFrame com as estilizações
         styled_df_area_rota = (
             grouped_df_area_rota.style
                 .applymap(highlight_zeros, subset=pd.IndexSlice[:, ['Realizado']])
-                .format({'Realizado': '{:.2f}', 'Meta': '{:.2f}', 'Diferença': '{:.2f}', 'Percentual %': '{:.2f}'})
+                .format({'Realizado': '{:.2f}', 'Meta': '{:.2f}', 'Diferença': '{:.2f}', 'Perc. %': '{:.2f}'})
                 .hide_index()
         )
 
@@ -200,14 +207,17 @@ elif area and secao and rota_area:
     grouped_df_area_rota_secao['Diferença'] = (grouped_df_area_rota_secao['Realizado']-grouped_df_area_rota_secao['Meta']).round(2)
 
     # Adicionar a coluna 'Percentual'
-    grouped_df_area_rota_secao['Percentual %'] = (
+    grouped_df_area_rota_secao['Perc. %'] = (
             (grouped_df_area_rota_secao['Realizado'] / grouped_df_area_rota_secao['Meta']) * 100).round(2)
+
+    # Remove as linhas que contem nan
+    grouped_df_area_rota_secao.dropna(inplace=True)
 
     # Criar DataFrame com as estilizações
     styled_df_area_rota_secao = (
         grouped_df_area_rota_secao.style
             .applymap(highlight_zeros, subset=pd.IndexSlice[:, ['Realizado']])
-            .format({'Realizado': '{:.2f}', 'Meta': '{:.2f}', 'Diferença': '{:.2f}', 'Percentual %': '{:.2f}'})
+            .format({'Realizado': '{:.2f}', 'Meta': '{:.2f}', 'Diferença': '{:.2f}', 'Perc. %': '{:.2f}'})
             .hide_index()
     )
 
@@ -233,13 +243,16 @@ elif area and secao and not rota_area:
     grouped_df_area_secao['Diferença'] = (grouped_df_area_secao['Realizado'] - grouped_df_area_secao['Meta']).round(2)
 
     # Adicionar a coluna 'Percentual'
-    grouped_df_area_secao['Percentual %'] = ((grouped_df_area_secao['Realizado'] / grouped_df_area_secao['Meta']) * 100).round(2)
+    grouped_df_area_secao['Perc. %'] = ((grouped_df_area_secao['Realizado'] / grouped_df_area_secao['Meta']) * 100).round(2)
+
+    # Remove as linhas que contem nan
+    grouped_df_area_secao.dropna(inplace=True)
 
     # Criar DataFrame com as estilizações
     styled_df_area_secao = (
         grouped_df_area_secao.style
             .applymap(highlight_zeros, subset=pd.IndexSlice[:, ['Realizado']])
-            .format({'Realizado': '{:.2f}', 'Meta': '{:.2f}', 'Diferença': '{:.2f}',  'Percentual %': '{:.2f}'})
+            .format({'Realizado': '{:.2f}', 'Meta': '{:.2f}', 'Diferença': '{:.2f}',  'Perc. %': '{:.2f}'})
             .hide_index()
     )
 
@@ -272,14 +285,17 @@ if setor and not (rota or secao or (rota and secao)):
     grouped_setor_df['Diferença'] = (grouped_setor_df['Realizado'] - grouped_setor_df['Meta']).round(2)
 
     # Adicionar a coluna 'Percentual'
-    grouped_setor_df['Percentual %'] = (
+    grouped_setor_df['Perc. %'] = (
                 (grouped_setor_df['Realizado'] / grouped_setor_df['Meta']) * 100).round(2)
+
+    # Remove as linhas que contem nan
+    grouped_setor_df.dropna(inplace=True)
 
     # Criar dataframe styler
     styled_df_setor = (
         grouped_setor_df.style
             .applymap(highlight_zeros, subset=pd.IndexSlice[:, ['Realizado']])
-            .format({'Realizado': '{:.2f}', 'Meta': '{:.2f}', 'Diferença': '{:.2f}', 'Percentual %': '{:.2f}'})
+            .format({'Realizado': '{:.2f}', 'Meta': '{:.2f}', 'Diferença': '{:.2f}', 'Perc. %': '{:.2f}'})
             .hide_index()
     )
 
@@ -304,14 +320,17 @@ if setor and rota and not (area or secao or (rota and secao)):
     grouped_setor_rota_df['Diferença'] = (grouped_setor_rota_df['Realizado'] - grouped_setor_rota_df['Meta']).round(2)
 
     # Adicionar a coluna 'Percentual'
-    grouped_setor_rota_df['Percentual %'] = (
+    grouped_setor_rota_df['Perc. %'] = (
                 (grouped_setor_rota_df['Realizado'] / grouped_setor_rota_df['Meta']) * 100).round(2)
+
+    # Remove as linhas que contem nan
+    grouped_setor_rota_df.dropna(inplace=True)
 
     # Criar dataframe styler
     styled_df_setor_rota = (
         grouped_setor_rota_df.style
             .applymap(highlight_zeros, subset=pd.IndexSlice[:, ['Realizado']])
-            .format({'Realizado': '{:.2f}', 'Meta': '{:.2f}', 'Diferença': '{:.2f}', 'Percentual %': '{:.2f}'})
+            .format({'Realizado': '{:.2f}', 'Meta': '{:.2f}', 'Diferença': '{:.2f}', 'Perc. %': '{:.2f}'})
             .hide_index()
     )
 
@@ -336,14 +355,17 @@ elif setor and rota and secao:
     grouped_df_setor_rota_secao['Diferença'] = (grouped_df_setor_rota_secao['Realizado']-grouped_df_setor_rota_secao['Meta']).round(2)
 
     # Adicionar a coluna 'Percentual'
-    grouped_df_setor_rota_secao['Percentual %'] = (
+    grouped_df_setor_rota_secao['Perc. %'] = (
             (grouped_df_setor_rota_secao['Realizado'] / grouped_df_setor_rota_secao['Meta']) * 100).round(2)
+
+    # Remove as linhas que contem nan
+    grouped_df_setor_rota_secao.dropna(inplace=True)
 
     # Criar DataFrame com as estilizações
     styled_df_grouped_df_setor_rota_secao = (
         grouped_df_setor_rota_secao.style
             .applymap(highlight_zeros, subset=pd.IndexSlice[:, ['Realizado']])
-            .format({'Realizado': '{:.2f}', 'Meta': '{:.2f}', 'Diferença': '{:.2f}', 'Percentual %': '{:.2f}'})
+            .format({'Realizado': '{:.2f}', 'Meta': '{:.2f}', 'Diferença': '{:.2f}', 'Perc. %': '{:.2f}'})
             .hide_index()
     )
 
@@ -372,13 +394,16 @@ elif setor and secao and not rota:
     grouped_df_setor_secao['Diferença'] = (grouped_df_setor_secao['Realizado'] - grouped_df_setor_secao['Meta']).round(2)
 
     # Adicionar a coluna 'Percentual'
-    grouped_df_setor_secao['Percentual %'] = ((grouped_df_setor_secao['Realizado'] / grouped_df_setor_secao['Meta']) * 100).round(2)
+    grouped_df_setor_secao['Perc. %'] = ((grouped_df_setor_secao['Realizado'] / grouped_df_setor_secao['Meta']) * 100).round(2)
+
+    # Remove as linhas que contem nan
+    grouped_df_setor_secao.dropna(inplace=True)
 
     # Criar DataFrame com as estilizações
     styled_df_grouped_df_setor_secao = (
         grouped_df_setor_secao.style
             .applymap(highlight_zeros, subset=pd.IndexSlice[:, ['Realizado']])
-            .format({'Realizado': '{:.2f}', 'Meta': '{:.2f}', 'Diferença': '{:.2f}',  'Percentual %': '{:.2f}'})
+            .format({'Realizado': '{:.2f}', 'Meta': '{:.2f}', 'Diferença': '{:.2f}',  'Perc. %': '{:.2f}'})
             .hide_index()
     )
 
