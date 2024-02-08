@@ -46,14 +46,24 @@ def busca_df_volume():
     )
     return df_volume
 
-# st.subheader(":bar_chart: DASHBOARD DE VENDAS ")
+st.subheader(":bar_chart: DASHBOARD DE VENDAS (Volume)")
 
-st.subheader("Vendas por volume")
+# st.subheader("Vendas por volume")
 
-# Data Frame para as areas
+#DataFrame para as Regionail
+df_regional = busca_df_volume()
+df_regional = df_regional.reset_index()
+
+df_regional = df_regional.drop(
+    columns=['Setor', 'Par/Impar', 'Fornecedor', 'Base Cli.', '1-Realizado',
+             '2-Anterior', '(1-2) - Diferença', '.%.', 'branco', '(4-5) Diferença', '%.', 'branco1', '8-Realizado',
+             '(8-9) Diferença', '9-Meta', '(8-9) Diferença', '.%', 'branco2', 'ST', 'SM', 'Tend. %',
+             ])
+
+# DataFrame para as areas
 area_dataframe_volume = busca_df_volume()
 
-# Data Frame para os SETORES
+# DataFrame para os SETORES
 dataframe_volume = busca_df_volume()
 
 # Removendo as colunas do dataframe_volume não necessarioas
@@ -80,6 +90,10 @@ with st.sidebar:
     logo_teste = Image.open('logo.png')
     st.image(logo_teste, width=250)
     st.subheader('DASHBOARD COMERCIAL')
+
+
+    regional_options = df_regional['Região'].unique()
+    regional = st.selectbox("Regional:", options=sorted(regional_options), index=None)
 
     # Utilizando a função unique() para obter valores únicos
     area_options = area_dataframe_volume['Área'].unique()
@@ -120,13 +134,50 @@ for num in range(100):
 
 # Destacar coluna com zeros
     def highlight_zeros(value):
-        return 'background-color: Red; color: White' if value == 0 else ''
+        background_color = 'Red' if value == 0 else ''
+        font_color = 'white' if value == 0 else ''
+        return f'background-color: {background_color}; color: {font_color}'
 
 
 def highlight_zeros(value):
     return 'background-color: Red' if value == 0 else ''
 
 
+# --------------------------------------------- REGIONAL --------------------------------------------------
+
+if regional and not (rota_area or secao or (rota_area and secao)):
+    df_regional = df_regional[df_regional['Região'] == regional]
+
+    # Agrupar DataFrame
+    df_regional = df_regional.groupby(['Região', 'Grupo']).agg({
+        'Realizado': 'sum',
+        'Meta': 'sum'
+    }).reset_index()
+
+    # Adicionar a coluna 'Diferença'
+    df_regional['Diferença'] = (df_regional['Realizado'] - df_regional['Meta']).round(2)
+
+    # Adicionar a coluna 'Perc. %'
+    df_regional['Perc. %'] = ((df_regional['Realizado'] / df_regional['Meta']) * 100).round(2)
+
+    # Remove as linhas que contem nan
+    df_regional.dropna(inplace=True)
+
+    # Criar DataFrame com as estilizações
+    styled_df = (
+        df_regional.style
+            .applymap(highlight_zeros, subset=pd.IndexSlice[:, ['Realizado']])
+            .format({'Realizado': '{:.2f}', 'Meta': '{:.2f}', 'Diferença': '{:.2f}', 'Perc. %': '{:.2f}'})
+            .hide_index()
+    )
+
+    # Exibir a tabela
+    st.table(styled_df)
+
+# ---------------------------------------------- FIM REGIONAL ------------------------------------------------#
+
+
+#---------------------------------------------- AREAS --------------------------------------------------------#
 if area and not (rota_area or secao or (rota_area and secao)):
     area_dataframe_filtered = area_dataframe_volume[area_dataframe_volume['Área'] == area]
 
@@ -259,10 +310,13 @@ elif area and secao and not rota_area:
     # Exibir a tabela estilizada
     st.table(styled_df_area_secao)
 
+#---------------------------------------------- FIM AREAS --------------------------------------------------------#
 
-# -------------------------------- LÓGICA SETORES ------------------------------- #
 
- # Inicialize a variável tabela_volume_por_grupo
+
+# ------------------------------------------- LÓGICA SETORES ---------------------------------------------------- #
+
+
 # Tabela de Volume por Grupo
 tabela_volume_por_grupo = pd.DataFrame()
 
@@ -409,3 +463,5 @@ elif setor and secao and not rota:
 
     # Exibir a tabela estilizada
     st.table(styled_df_grouped_df_setor_secao)
+
+# ------------------------------------------- FIM LÓGICA SETORES ---------------------------------------------------- #
