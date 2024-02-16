@@ -20,8 +20,8 @@ with open("style.css") as f:
 
 # --- Criando o dataframe
 @st.cache_data
-def busca_df():
-    df = pd.read_excel(
+def busca_df_faturamento():
+    df_fat = pd.read_excel(
         io='rjcariri.xlsx',
         index_col=0,
         engine='openpyxl',
@@ -29,9 +29,9 @@ def busca_df():
         usecols='A:AA',
         nrows=5383,
     )
-    return df
+    return df_fat
 
-df = busca_df()
+
 
 # Dataframe geral
 @st.cache_data
@@ -45,6 +45,7 @@ def busca_df_volume():
         nrows=5383,
     )
     return df_volume
+
 
 st.subheader(":bar_chart: DASHBOARD DE VENDAS (Volume)")
 
@@ -465,3 +466,80 @@ elif setor and secao and not rota:
     st.table(styled_df_grouped_df_setor_secao)
 
 # ------------------------------------------- FIM LÓGICA SETORES ---------------------------------------------------- #
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ------------------------------------------- FATURAMENTO ---------------------------------------------------- #
+
+with open('packages.txt', 'w') as packages:
+    packages.write('locales-all\n')
+
+import locale
+locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+
+df_faturamento = busca_df_faturamento()
+
+fat_setor = df_faturamento.drop(
+    columns=['Par/Impar', 'Fornecedor', 'Base Cli.', '1-Realizado',
+             '2-Anterior', '(1-2) - Diferença', '.%.', 'branco', '(4-5) Diferença', '%.', 'branco1', '8-Realizado',
+             '(8-9) Diferença', '9-Meta', '(8-9) Diferença', '.%', 'branco2', 'ST', 'SM', 'Tend. %',
+             ])
+
+# buscando a meta do consultor
+meta_faturamento_setor = fat_setor.loc[fat_setor['Setor'] == setor, 'Meta'].sum()
+
+# Formatando o formato da meta para 2 casas decimais
+# meta_formatada = f"R$ {meta_faturamento_setor:,.2f}"
+meta_formatada = locale.currency(meta_faturamento_setor, grouping=True, symbol='R$')
+
+# buscando a faturamento do setor
+faturamento_setor = fat_setor.loc[fat_setor['Setor'] == setor, 'Realizado'].sum()
+
+# Formatando o formato da faturamento por setor para 2 casas decimais
+# fat_setor_formatada = f"R$ {faturamento_setor:,.2f}"
+fat_setor_formatada = locale.currency(faturamento_setor, grouping=True, symbol='R$')
+
+# calculo de difereça
+diferenca = faturamento_setor - meta_faturamento_setor
+# diferenca_formatada = f"R$ {diferenca:,.2f}"
+diferenca_formatada = locale.currency(diferenca, grouping=True, symbol='R$')
+
+
+# calculando a porcentagem
+porcentagem_meta_setor = round(faturamento_setor / meta_faturamento_setor * 100, 2)
+
+st.markdown("---")
+
+col1, col2, col3, col4,  = st.columns([1, 1, 1, 1])
+
+with col1:
+    st.write('**META**')
+    st.info(meta_formatada)
+
+with col2:
+    st.write('**FATURAMENTO**')
+    st.info(fat_setor_formatada)
+
+with col3:
+    st.write('**DIFERENÇA**')
+    st.info(diferenca_formatada)
+
+with col4:
+    st.write('**Perc.%**')
+    st.info(porcentagem_meta_setor)
+
+st.markdown("---")
