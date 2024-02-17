@@ -485,6 +485,8 @@ elif setor and secao and not rota:
 
 # ------------------------------------------- FATURAMENTO ---------------------------------------------------- #
 
+
+
 with open('packages.txt', 'w') as packages:
     packages.write('locales-all\n')
 
@@ -524,6 +526,8 @@ porcentagem_meta_setor = round(faturamento_setor / meta_faturamento_setor * 100,
 
 st.markdown("---")
 
+st.subheader(f"Faturamento 💰")
+
 col1, col2, col3, col4,  = st.columns([1, 1, 1, 1])
 
 with col1:
@@ -531,7 +535,7 @@ with col1:
     st.info(meta_formatada)
 
 with col2:
-    st.write('**FATURAMENTO**')
+    st.write('**REALIZADO**')
     st.info(fat_setor_formatada)
 
 with col3:
