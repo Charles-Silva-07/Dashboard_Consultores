@@ -313,10 +313,7 @@ elif area and secao and not rota_area:
 
 #---------------------------------------------- FIM AREAS --------------------------------------------------------#
 
-
-
 # ------------------------------------------- LÓGICA SETORES ---------------------------------------------------- #
-
 
 # Tabela de Volume por Grupo
 tabela_volume_por_grupo = pd.DataFrame()
