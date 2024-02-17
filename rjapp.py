@@ -508,6 +508,8 @@ porcentagem_meta_setor = round(faturamento_setor / meta_faturamento_setor * 100,
 
 st.markdown("---")
 
+st.subheader(f"Faturamento 💰")
+
 col1, col2, col3, col4,  = st.columns([1, 1, 1, 1])
 
 with col1:
