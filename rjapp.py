@@ -47,7 +47,7 @@ def busca_df_volume():
     return df_volume
 
 
-st.subheader(":bar_chart: DASHBOARD DE VENDAS (Volume)")
+st.subheader(":bar_chart: DASHBOARD DE VENDAS")
 
 # st.subheader("Vendas por volume")
 
@@ -318,6 +318,12 @@ elif area and secao and not rota_area:
 # Tabela de Volume por Grupo
 tabela_volume_por_grupo = pd.DataFrame()
 
+if setor:
+    st.subheader(f'Vendas Volume Setor: {setor} 📦')
+else:
+    st.write()
+
+
 # Início Filtros Setores
 if setor and not (rota or secao or (rota and secao)):
     tabela_volume_por_grupo = dataframe_volume.loc[
@@ -503,26 +509,30 @@ diferenca_formatada = locale.currency(diferenca, grouping=True, symbol='R$')
 # calculando a porcentagem
 porcentagem_meta_setor = round(faturamento_setor / meta_faturamento_setor * 100, 2)
 
-st.markdown("---")
+if setor:
+    st.markdown("---")
+    st.subheader(f'Faturamendo Setor: {setor} 💰')
 
-st.subheader(f"Faturamento 💰")
+    col1, col2, col3, col4, = st.columns([1, 1, 1, 1])
 
-col1, col2, col3, col4,  = st.columns([1, 1, 1, 1])
+    with col1:
+        st.write('**META**')
+        st.info(meta_formatada)
 
-with col1:
-    st.write('**META**')
-    st.info(meta_formatada)
+    with col2:
+        st.write('**FATURAMENTO**')
+        st.info(fat_setor_formatada)
 
-with col2:
-    st.write('**FATURAMENTO**')
-    st.info(fat_setor_formatada)
+    with col3:
+        st.write('**DIFERENÇA**')
+        st.info(diferenca_formatada)
 
-with col3:
-    st.write('**DIFERENÇA**')
-    st.info(diferenca_formatada)
+    with col4:
+        st.write('**Perc.%**')
+        st.info(porcentagem_meta_setor)
 
-with col4:
-    st.write('**Perc.%**')
-    st.info(porcentagem_meta_setor)
+    st.markdown("---")
 
-st.markdown("---")
+else:
+    st.write()
+
