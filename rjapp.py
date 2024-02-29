@@ -27,7 +27,7 @@ def busca_df_faturamento():
         engine='openpyxl',
         sheet_name='dados',
         usecols='A:AA',
-        nrows=5422,
+        nrows=5561,
     )
     return df_fat
 
@@ -42,7 +42,7 @@ def busca_df_volume():
         engine='openpyxl',
         sheet_name='volume',
         usecols='A:AA',
-        nrows=5422,
+        nrows=5561,
     )
     return df_volume
 
