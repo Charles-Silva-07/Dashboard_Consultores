@@ -32,6 +32,20 @@ def busca_df_faturamento():
     return df_fat
 
 
+# def imagem_fundo():
+#     # Carrega a imagem do seu diretório local
+#     image = open('logo.png', 'rb')
+#     image_bytes = image.read()
+#
+#     # Exibe a imagem na página do Streamlit
+#     st.image(image_bytes, use_column_width=True)
+
+
+# Carregando a imagem
+background_image = "logo.png"
+st.image(background_image, use_column_width=True)
+
+
 
 # Dataframe geral
 @st.cache_data
@@ -603,6 +617,7 @@ elif area:
 
     # ____________________Area__________________#
 
+
     # ____________________Regionais__________________#
 elif regional:
     st.markdown("---")
@@ -626,7 +641,7 @@ elif regional:
             st.write('**Perc.%**')
             st.info(porcentagem_meta_rerional)
 
-        st.markdown("---")
+    st.markdown("---")
 
 
 

@@ -26,3 +26,22 @@ h3{
     text-align: center;
 }
 
+.stDeployButton{
+    display: none;
+}
+
+.stAlert:hover {
+    background-color: #404c5a;
+}
+
+.st-emotion-cache-1j6rxz7.e1eexb540:hover {
+    color: #f9f9f9;
+}
+
+.st-emotion-cache-z5fcl4 {
+    width: 100%;
+    padding: 6rem 1rem 10rem;
+    min-width: auto;
+    max-width: initial;
+    background-image: url('logo.png')
+}
