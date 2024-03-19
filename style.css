@@ -45,26 +45,3 @@ h3{
     max-width: initial;
     background-image: url('logo.png')
 }
-
-/* oculta o iconode de fork do github */
-.st-emotion-cache-ch5dnh {
-    /* display: inline-flex; */
-    -webkit-box-align: center;
-    align-items: center;
-    -webkit-box-pack: center;
-    justify-content: center;
-    font-weight: 400;
-    border-radius: 0.5rem;
-    margin: 0px 0.125rem;
-    color: inherit;
-    width: auto;
-    user-select: none;
-    background-color: transparent;
-    border: none;
-    padding: 0.5rem;
-    font-size: 14px;
-    line-height: 1;
-    min-width: 2rem;
-    min-height: 2rem;
-    display: none;
-}
