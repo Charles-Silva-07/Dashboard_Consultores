@@ -31,7 +31,6 @@ def busca_df_faturamento():
     )
     return df_fat
 
-
 # def imagem_fundo():
 #     # Carrega a imagem do seu diretório local
 #     image = open('logo.png', 'rb')
