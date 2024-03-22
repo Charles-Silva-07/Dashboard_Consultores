@@ -42,8 +42,8 @@ def busca_df_faturamento():
 
 
 # Carregando a imagem
-background_image = "logo.png"
-st.image(background_image, use_column_width=True)
+# background_image = "logo.png"
+# st.image(background_image, use_column_width=True)
 
 
 
