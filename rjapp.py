@@ -27,9 +27,30 @@ def busca_df_faturamento():
         engine='openpyxl',
         sheet_name='dados',
         usecols='A:AA',
-        nrows=5561,
+        nrows=5880,
     )
     return df_fat
+
+
+# Adicione um estilo CSS para ocultar o logotipo do Streamlit
+
+st.markdown(
+
+    """
+
+    <style>
+
+    #MainMenu {visibility: hidden;}
+
+    footer {visibility: hidden;}
+
+    </style>
+
+    """,
+
+    unsafe_allow_html=True
+
+)
 
 
 # def imagem_fundo():
@@ -56,7 +77,7 @@ def busca_df_volume():
         engine='openpyxl',
         sheet_name='volume',
         usecols='A:AA',
-        nrows=5561,
+        nrows=5880,
     )
     return df_volume
 
@@ -79,8 +100,7 @@ df_regional = df_regional.drop(
 df_regional_fat = busca_df_faturamento()
 df_regional_fat = df_regional_fat.reset_index()
 
-df_regional_fat = df_regional_fat.drop(
-    columns=['Setor', 'Par/Impar', 'Fornecedor', 'Base Cli.', '1-Realizado',
+df_regional_fat = df_regional_fat.drop(columns=['Setor', 'Par/Impar', 'Fornecedor', 'Base Cli.', '1-Realizado',
              '2-Anterior', '(1-2) - Diferença', '.%.', 'branco', '(4-5) Diferença', '%.', 'branco1', '8-Realizado',
              '(8-9) Diferença', '9-Meta', '(8-9) Diferença', '.%', 'branco2', 'ST', 'SM', 'Tend. %',
              ])
@@ -149,7 +169,7 @@ with st.sidebar:
 
     # Spiner
     with st.spinner("Carregando..."):
-        time.sleep(2)
+        time.sleep(0.1)
     st.success("Pronto")
 
 # Barra de progresso
